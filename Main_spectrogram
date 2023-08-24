@@ -1,0 +1,35 @@
+%% Spectrogram for generic audio
+%
+clearvars
+close all
+clc
+%
+% Load and preprocess your audio file 'Audio.wav'
+[Audio, sampleRate] = audioread('Audio.wav');
+Audio = sum(Audio, 2); % Convert to mono
+%
+figure
+plot(Audio)
+xlabel("Samples")
+ylabel("Amplitude")
+%
+% STFT parameters (Short-Time Fourier Transform)
+windowLength = 1024;             % Length of each segmentm through a window filter, expressed in sample numbers
+overlap      = 0.70;             % Relative overlap between adjacent segments, between 0 and 1
+nfft         = windowLength*2;   % fft size to compute the fft of each block
+%
+% Calculate STFT
+[s, f, t] = spectrogram(Audio, hamming(windowLength), round(overlap*windowLength), nfft, sampleRate);
+% s = magnitude for the (positive) frequencies
+% f = frequency axis labels
+% t = time labels
+%
+% Visualize the spectrogram's frequency spectrum over time
+figure
+imagesc(t, f, 20*log10(abs(s)));
+colormap('jet');
+colorbar;
+xlabel('Time (s)');
+ylabel('Frequency (Hz)');
+title('Continuous Spectrogram');
+ylim([0 5000])
